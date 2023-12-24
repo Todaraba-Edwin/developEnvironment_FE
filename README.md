@@ -168,7 +168,104 @@ yarn add package-name --dev
 
 ### [프론트엔드 개발환경의 이해 : 웹팩(기본)](https://jeonghwan-kim.github.io/series/2019/12/10/frontend-dev-env-webpack-basic.html)
 
+#### 1. Webpack 배경
 문법 수준에서 모듈이 지원된 것은 ES2015(import && export)부터이다. ES2015 이전에 모듈을 구현하는 방식에는 `AMD`와 `CommnonJS`가 대표적이다. 그 가운데 CommonJS는 exports && require() 함수로 자바스크립트를 불러들인다. AMD는 `Asynchronous` 비동기로 로딩되는 브라우져의 환경에서의 자바스크립트를 불러들이는 방식이다. 
+
+#### 2. 엔트리 & 아웃풋의 기본개념
+웹팩은 여러개 JS 파일을 하나로 합쳐주는 번들러(Bundler)이다. 하나의 `사작점(entry)`로부터 의존적인 모듈을 전부 찾아내서 하나의 결과물을 만들어낸다. 
+
+```bash
+npm install -D webpack webpack-cli
+yarn add webpack webpack-cli -D
+
+# 설치가 마무리되면, node_modules/.bin 폴더안에 관련 패키지에 대한 폴더가 있다. 
+
+node_modules/.bin/webpack --help
+# 해당 명령어를 설치하면, 실행 가능한 명령어 목록을 확인 할 수 있다. 
+# Usage: webpack [entries...] [options]
+# Alternative usage to run commands: webpack [command] [options]
+
+# The build tool for modern web applications.
+# Options:
+#   -c, --config <pathToConfigFile...>     Provide path to one or more webpack
+#                                          configuration files to process, e.g.
+#                                          "./webpack.config.js".
+```
+
+여기서 중요한 명령어는 `--mode`, `--entry`, `--output` 이다. 세 개 옵션을 사용하여 번들을 수행할 수 있다. 
+
+- `--mode` : 웹팩 실행모드를 의미하는데, 개발 버전인 development를 지정
+- `--entry` : 시작점 경로를 지정하는 옵션
+- `--output` : 번들링 결과물을 위치할 경로
+
+```bash
+node_modules/.bin/webpack --mode development --entry ./src/app.js -o dist/main.js 
+# 강의안과 다르게 명령어가 면경되었다. 
+# -o, --output-path <value>              The output directory as **absolute path**
+#                                          (required).
+
+# 실행하면, 그 결과과 함께, 디렉토리 안에 main.js가 생성된 것을 확인할 수 있다. 
+asset main.js 20.1 KiB [emitted] (name: main)
+runtime modules 670 bytes 3 modules
+cacheable modules 8.57 KiB
+  modules by path ./src/views/*.js 4.78 KiB
+    ./src/views/FormView.js 1.01 KiB [built] [code generated]
+    ./src/views/ResultView.js 742 bytes [built] [code generated]
+    ./src/views/TabView.js 759 bytes [built] [code generated]
+    ./src/views/KeywordView.js 994 bytes [built] [code generated]
+    ./src/views/HistoryView.js 884 bytes [built] [code generated]
+    ./src/views/View.js 482 bytes [built] [code generated]
+  modules by path ./src/models/*.js 1.37 KiB
+    ./src/models/SearchModel.js 500 bytes [built] [code generated]
+    ./src/models/KeywordModel.js 279 bytes [built] [code generated]
+    ./src/models/HistoryModel.js 626 bytes [built] [code generated]
+  ./src/app.js 145 bytes [built] [code generated]
+  ./src/controllers/MainController.js 2.28 KiB [built] [code generated]
+webpack 5.89.0 compiled successfully in 78 ms
+```
+
+이후, index.html에 번들된 결과를 기록하면 된다. 
+```html
+<script src="dist/main.js"></script>
+```
+
+#### 3. webpack.config.js
+```bash
+node_modules/.bin/webpack --help
+# --config               Path to the config file
+#                        [문자열] [기본: webpack.config.js or webpackfile.js]
+```
+
+webpack 명령어 가운데 `--config`는 웹팩 설정파일의 경로를 지정할 수 있으며 기본 파일명은 webpack.config.js 혹은 webpackfile.js이다. 프로젝트에 webpack.config.js 파일이 없다면, 직접 생성하여 해당 파일을 설정한 후 명령을 실행하면 된다.
+
+```bash
+# package.json 스크립트 명령어를 추가하고 실행해보자. 
+# "build": "./node_modules/.bin/webpack"
+
+yarn build                     
+yarn run v1.22.21
+$ ./node_modules/.bin/webpack
+asset main.js 20.1 KiB [emitted] (name: main)
+runtime modules 670 bytes 3 modules
+cacheable modules 8.57 KiB
+  modules by path ./src/views/*.js 4.78 KiB
+    ./src/views/FormView.js 1.01 KiB [built] [code generated]
+    ./src/views/ResultView.js 742 bytes [built] [code generated]
+    ./src/views/TabView.js 759 bytes [built] [code generated]
+    ./src/views/KeywordView.js 994 bytes [built] [code generated]
+    ./src/views/HistoryView.js 884 bytes [built] [code generated]
+    ./src/views/View.js 482 bytes [built] [code generated]
+  modules by path ./src/models/*.js 1.37 KiB
+    ./src/models/SearchModel.js 500 bytes [built] [code generated]
+    ./src/models/KeywordModel.js 279 bytes [built] [code generated]
+    ./src/models/HistoryModel.js 626 bytes [built] [code generated]
+  ./src/app.js 145 bytes [built] [code generated]
+  ./src/controllers/MainController.js 2.28 KiB [built] [code generated]
+webpack 5.89.0 compiled successfully in 76 ms
+✨  Done in 0.61s.
+```
+
+모든 옵션을 웹팩 설정 파일로 옮겼기 때문데 단순히 webpack 명령어만 실행하면 된다. 
 
 ---
 ### 1. 웹팩 : 앤트리와 아웃풋 실습
@@ -180,3 +277,5 @@ yarn add package-name --dev
 
 
 </details>
+
+- [TODARABA-EDWIN, 해당 저장소](https://github.com/Todaraba-Edwin/developEnvironment_FE)
