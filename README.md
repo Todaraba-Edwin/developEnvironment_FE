@@ -49,6 +49,17 @@ cat ~/.ssh/id_rsa.pub
 ---
 </details>
 
+<details>
+<summary>github에 올라간 파일에 대한 캐시제거</summary>
+
+```bash 
+git rm --cached -r "[folder or file Name]"
+```
+</details>
+
+<br/>
+
+# Github 저장소 관리 
 
 <details>
 <summary>[<strong>Inflearn : 2023.12~</strong>] jeonghwan-kim: github sorce code</summary>
